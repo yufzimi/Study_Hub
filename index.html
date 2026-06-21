@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zee Academy | Your Aesthetic Study Space</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-soft: #EEF2FF;
+            --accent-purple: #818CF8;
+            --accent-pink: #F472B6;
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: #1f2937;
+            overflow-x: hidden;
+        }
+        .soft-title { font-family: 'Fredoka', sans-serif; }
+        
+        /* Aesthetic Floating Effect */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        .aesthetic-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 24px;
+        }
+        .aesthetic-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 20px 40px rgba(129, 140, 248, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        /* Heart Pulse for 'Addictive' Love */
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .love-badge {
+            animation: heartPulse 2s infinite;
+            background: rgba(244, 114, 182, 0.1);
+            color: var(--accent-pink);
+        }
+
+        /* Modern Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 10px; }
+
+        /* PDF Viewer Styling */
+        #vaultOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 1000;
+            display: none; align-items: center; justify-content: center;
+        }
+        .pdf-container { width: 90%; height: 90%; background: white; border-radius: 20px; overflow: hidden; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <!-- Header Section -->
+    <header class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+        <div>
+            <h1 class="soft-title text-4xl md:text-5xl font-bold text-gray-800">Zee<span class="text-indigo-500">Academy</span></h1>
+            <p class="text-gray-500 mt-2 tracking-wide font-medium">Empowering your G.C.E. A/L journey ✨</p>
+        </div>
+        <div class="flex items-center gap-4 bg-white p-2 rounded-full shadow-sm border border-gray-100">
+            <span class="pl-4 text-sm font-semibold text-gray-400">Search Subjects</span>
+            <input type="text" id="subjectSearch" onkeyup="filterVault()" placeholder="Physics, ICT..." 
+                   class="bg-gray-50 rounded-full px-6 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition-all w-64 text-gray-700">
+        </div>
+    </header>
+
+    <!-- Welcome Message with 'Love' Effect -->
+    <div class="max-w-7xl mx-auto mb-16 text-center">
+        <span class="love-badge px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-4 inline-block">Made with Love for Students</span>
+        <h2 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight leading-tight">
+            Your Ultimate <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-pink-500">Knowledge Space.</span>
+        </h2>
+    </div>
+
+    <!-- Paper Categories Pills -->
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-4 mb-12">
+        <button onclick="categoryFilter('All')" class="px-8 py-3 rounded-2xl bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-200 transition-all">All Vaults</button>
+        <button onclick="categoryFilter('Science')" class="px-8 py-3 rounded-2xl bg-white text-gray-600 font-bold border border-gray-100 hover:border-indigo-200 transition-all">Science</button>
+        <button onclick="categoryFilter('Commerce')" class="px-8 py-3 rounded-2xl bg-white text-gray-600 font-bold border border-gray-100 hover:border-indigo-200 transition-all">Commerce</button>
+        <button onclick="categoryFilter('Tech')" class="px-8 py-3 rounded-2xl bg-white text-gray-600 font-bold border border-gray-100 hover:border-indigo-200 transition-all">Technology</button>
+    </div>
+
+    <!-- Main Vault Grid -->
+    <main id="paperGrid" class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <!-- JS will render Aesthetic Cards here -->
+    </main>
+
+    <!-- PDF Viewer Overlay -->
+    <div id="vaultOverlay">
+        <div class="pdf-container relative">
+            <button onclick="closeVault()" class="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full font-bold shadow-lg">Close</button>
+            <iframe src="" id="vaultFrame" class="w-full h-full border-none"></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Core Data drawn from sources: e-kalvi [3], exampapers.lk [4], Sri Lanka Past Papers [5]
+        const mainVault = [
+            { id: 1, title: "A/L ICT 2022 Paper", stream: "Tech", year: "2022", source: "e-Kalvi", link: "https://e-kalvi.com/wp-content/uploads/2023/AL/ICT-2022.pdf" },
+            { id: 2, title: "Combined Maths Tamil", stream: "Science", year: "2025", source: "exampapers.lk", link: "https://exampapers.lk/2025-al-combined-maths-tamil.pdf" },
+            { id: 3, title: "A/L Physics (Sinhala)", stream: "Science", year: "2021", source: "Sri Lanka Past Papers", link: "https://pastpapers.lk/physics-2021-sinhala-medium.pdf" },
+            { id: 4, title: "Biology Marking (12-22)", stream: "Science", year: "2022", source: "e-Kalvi", link: "https://e-kalvi.com/biology-marking-schemes-2012-2022/" },
+            { id: 5, title: "A/L Chemistry (10-22)", stream: "Science", year: "2022", source: "e-Kalvi", link: "https://e-kalvi.com/chemistry-past-papers-2010-2022/" },
+            { id: 6, title: "Accounting Past Paper", stream: "Commerce", year: "2025", source: "Sri Lanka Past Papers", link: "https://pastpapers.lk/accounting-2025-sinhala.pdf" },
+            { id: 7, title: "Engineering Tech 2022", stream: "Tech", year: "2022", source: "e-Kalvi", link: "https://e-kalvi.com/engineering-technology-2022-past-paper/" },
+            { id: 8, title: "Business Studies Pack", stream: "Commerce", year: "2021", source: "e-Kalvi", link: "https://e-kalvi.com/business-studies-2021/" }
+        ];
+
+        // UI Rendering with Aesthetic "Love" Cards
+        function renderVault(items) {
+            const grid = document.getElementById('paperGrid');
+            grid.innerHTML = items.map(item => `
+                <div class="aesthetic-card p-8 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-[10px] font-bold text-indigo-400 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-widest">${item.stream}</span>
+                            <span class="text-xs font-semibold text-gray-300">${item.year}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 leading-snug group-hover:text-indigo-500 transition-colors">${item.title}</h3>
+                        <p class="text-xs text-gray-400 mt-2 uppercase tracking-tighter">Source: ${item.source}</p>
+                    </div>
+                    <button onclick="openVault('${item.link}')" class="mt-8 w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-indigo-500 transition-all shadow-xl shadow-gray-200">
+                        Open Study Vault
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Search & Filter Logic
+        function filterVault() {
+            const q = document.getElementById('subjectSearch').value.toLowerCase();
+            const filtered = mainVault.filter(i => i.title.toLowerCase().includes(q));
+            renderVault(filtered);
+        }
+
+        function categoryFilter(cat) {
+            if(cat === 'All') return renderVault(mainVault);
+            const filtered = mainVault.filter(i => i.stream === cat);
+            renderVault(filtered);
+        }
+
+        // PDF Viewer Controls
+        function openVault(link) {
+            document.getElementById('vaultFrame').src = link;
+            document.getElementById('vaultOverlay').style.display = 'flex';
+            // Telegram Alert (Optional, previously requested)
+            console.log("Notifying Telegram for Link: " + link);
+        }
+
+        function closeVault() {
+            document.getElementById('vaultOverlay').style.display = 'none';
+            document.getElementById('vaultFrame').src = '';
+        }
+
+        // Initial Load
+        renderVault(mainVault);
+    </script>
+</body>
+</html>
